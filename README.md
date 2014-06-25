@@ -28,7 +28,7 @@ gcli -a compute -v v1 \
 Ex2: bigquery job query
 
 ```
-./bin/gcli -a bigquery -v v2 \
+gcli -a bigquery -v v2 \
   -s "https://www.googleapis.com/auth/bigquery" \
   -s "https://www.googleapis.com/auth/bigquery.readonly" \
   -f bigquery.jobs.query \
