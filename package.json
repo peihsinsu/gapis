@@ -1,0 +1,17 @@
+{
+  "name": "gapis",
+  "version": "0.0.1",
+  "description": "Using CLI to use google api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "~2.2.0",
+    "underscore": "~1.6.0",
+    "nodeutil": "0.0.29",
+    "googleapis": "~0.7.0"
+  }
+}

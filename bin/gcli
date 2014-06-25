@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+var fs = require('fs')
+  , ver = '0.0.1'
+  , http = require('http')
+  , util = require('util')
+  , p = require('commander')
+  , _ = require('underscore')
+  , loglevel = p.loglevel||process.env['LOG_LEVEL']||'INFO'
+  , log = require('nodeutil').logger.getInstance('gcli');
+
+var googleapis = require('googleapis');
+
+var collect = function(v, memo) {
+	memo.push(v);
+	return memo;
+};
+
+p.version(ver)
+  .option('-l, --loglevel <loglevel>', 'Specific log level, generally like: FATAL, ERROR, WARN, INFO, DEBUG, TRACE')
+  .option('-a, --api <api>', 'The name of api')
+  .option('-v, --api_version <api_version>', 'The version of api')
+  .option('-f, --func <func>', 'The function name of api')
+  .option('-p, --project <project>', 'The project id')
+  .option('-d, --condition <condition>', 'The condition key value of api', collect, [])
+  .option('-b, --body <body>', 'The body of api', collect, [])
+  .option('-s, --scopes <scopes>', 'The scopes of api request', collect, [])
+
+p.parse(process.argv);
+
+/* setup log level */
+log.setLevel(loglevel);
+
+var gsapi = require('../gservice');
+
+p.project = p.project || process.env.GCP_PROJECT;
+p.api = p.api || process.env.GCP_API;
+p.api_version = p.api_version || process.env.GCP_API_VERSION;
+
+p.body = formatObject(p.body);
+p.condition = formatObject(p.condition);
+p.scopes = p.scopes && p.scopes.length > 0 ? p.scopes : 
+	(process.env.GCP_API_SCOPES ? process.env.GCP_API_SCOPES.split(',') : null);
+
+if(!p.scopes || p.scopes.length <= 0) {
+  log.error('API scopes not found...');
+  log.info('p.scopes = ', p.scopes);
+  log.info('process.env.GCP_API_SCOPES = ', process.env.GCP_API_SCOPES);
+  process.exit(1);
+}
+
+log.info('Got the scopes: ', JSON.stringify(p.scopes));
+
+//DO service
+log.trace('project:%s, api:%s, version:%s, func:%s, condition:%s, body:%s', 
+	p.project, p.api, p.api_version, p.func, JSON.stringify(p.condition), JSON.stringify(p.body));
+
+function formatObject(paramArr) {
+  log.trace('Got param: %s, length: %s', JSON.stringify(paramArr), paramArr.length);
+  if(paramArr && paramArr.length > 0) {
+		var obj = {};
+		for(var i=0 ; i < paramArr.length ; i++) {
+			var v = paramArr[i];
+			if(v.indexOf('=') > 0) {
+				var d = v.split('=');
+				obj[d[0]] = d[1];
+			}
+		}
+		return obj;
+  } 
+  return null;
+}
+
+// Do the api call
+gsapi.doit(p.project, p.scopes, p.api, p.api_version, p.func, p.condition, p.body);
