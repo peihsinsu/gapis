@@ -7,6 +7,10 @@ Google API Node.js CommandLine
 npm install gapis -g
 ```
 
+## Idea of design
+
+I made a chinese document for describe the idea I made the gapis cli tool. Please reference here: http://peihsinsu.blogspot.tw/2014/06/nodejs-implements-google-api-in-command.html
+
 ## Prepare
 
 Current support service account only
