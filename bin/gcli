@@ -48,7 +48,7 @@ if(!p.scopes || p.scopes.length <= 0) {
   process.exit(1);
 }
 
-log.info('Got the scopes: ', JSON.stringify(p.scopes));
+log.trace('Got the scopes: ', JSON.stringify(p.scopes));
 
 //DO service
 log.trace('project:%s, api:%s, version:%s, func:%s, condition:%s, body:%s', 
